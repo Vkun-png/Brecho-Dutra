@@ -1,0 +1,184 @@
+/* Estilos do Brechó Dutra - mobile first */
+/* 1. Cores e ajustes globais */
+:root {
+  --rosa: #F90968;
+  --rosa-escuro: #CB004F;
+  --amarelo: #FFD037;
+  --laranja: #F57C00;
+  --branco: #FFFFFF;
+  --texto: #40172A;
+  --cinza: #715767;
+  --fundo-cartao: #FFF8FB;
+  --sombra: 0 12px 28px rgba(90, 5, 43, .15);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--rosa);
+  color: var(--branco);
+  font-family: Inter, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input { font: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 3px; }
+.app { width: min(100%, 560px); margin: 0 auto; padding: 22px 18px calc(38px + env(safe-area-inset-bottom)); }
+
+/* 2. Identidade visual da loja */
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { position: relative; line-height: .91; isolation: isolate; padding-left: 3px; }
+.logo::before {
+  content: ""; position: absolute; z-index: -1; right: -19px; bottom: -14px;
+  width: 71px; height: 71px; border-radius: 50%; background: var(--laranja);
+}
+.logo span, .logo strong { display: block; font-family: 'Playfair Display', Georgia, serif; }
+.logo span { font-weight: 400; font-size: 25px; letter-spacing: -.8px; }
+.logo strong { font-weight: 800; font-size: 43px; letter-spacing: -2px; }
+.selo { border: 1px solid rgba(255,255,255,.55); padding: 9px 12px; border-radius: 100px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.intro { margin: 49px 0 18px; }
+h1 { margin: 0; font-size: clamp(25px, 6vw, 33px); line-height: 1.15; letter-spacing: -1px; }
+.intro p { margin: 9px 0 0; color: #FFF0F5; line-height: 1.55; font-size: 14px; }
+
+/* 3. Bloco de voz (o elemento principal do aplicativo) */
+.area-voz { text-align: center; padding: 16px 0 18px; }
+.mic {
+  width: 154px; height: 154px; border: 0; border-radius: 50%;
+  display: inline-flex; justify-content: center; align-items: center;
+  color: #3B1826; background: var(--amarelo);
+  box-shadow: 0 9px 0 rgba(92,23,41,.16), 0 16px 35px rgba(70,0,30,.15);
+  transition: transform .15s ease, box-shadow .15s ease;
+  position: relative;
+}
+.mic:active { transform: translateY(3px) scale(.98); }
+.mic svg { width: 67px; height: 67px; }
+.mic.ouvindo { animation: pulsar 1.4s infinite ease-in-out; background: white; }
+@keyframes pulsar {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,.5), 0 9px 0 rgba(92,23,41,.16); }
+  50% { box-shadow: 0 0 0 18px rgba(255,255,255,0), 0 9px 0 rgba(92,23,41,.16); }
+}
+.acao-voz { display: block; margin-top: 18px; font-size: 18px; font-weight: 800; }
+.exemplo { max-width: 360px; margin: 7px auto 0; color: #FFF1F6; line-height: 1.6; font-size: 13px; }
+.feedback {
+  min-height: 45px; margin: 15px auto 0; padding: 11px 13px;
+  max-width: 430px; border-radius: 13px; font-size: 13px; line-height: 1.4;
+  background: rgba(0,0,0,.15); overflow-wrap: anywhere;
+}
+.feedback:empty { display: none; }
+.mic.conectando { background: #FFE8A1; }
+.mic.finalizando { background: #FFFFFF; animation: none; }
+.ditado-atalho {
+  display: block; margin: 10px auto 0; padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.65); border-radius: 12px;
+  background: rgba(255,255,255,.09); color: #FFFFFF;
+  font-size: 12px; font-weight: 700; line-height: 1.45;
+}
+.ditado-painel { text-align: left; margin: 12px auto 0; padding: 15px;
+  max-width: 440px; border-radius: 16px; background: #FFF8FB; color: var(--texto); }
+.ditado-painel[hidden] { display: none; }
+.ditado-painel label { display: block; font-weight: 800; font-size: 14px; }
+.ditado-painel p { margin: 7px 0 10px; color: #725865; font-size: 12px; line-height: 1.5; }
+.ditado-painel textarea { width: 100%; min-height: 93px; resize: vertical;
+  border: 1px solid #E3D0D9; border-radius: 12px; padding: 12px; color: var(--texto);
+  font: inherit; font-size: 15px; }
+.ditado-painel .botao { width: 100%; margin-top: 9px; }
+
+/* 4. Botões de ações rápidas */
+.acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 7px 0 26px; }
+.botao {
+  min-height: 53px; padding: 11px 13px; border-radius: 16px; border: 2px solid transparent;
+  font-size: 14px; line-height: 1.3; font-weight: 800;
+  display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+}
+.botao svg { width: 20px; height: 20px; flex: none; }
+.botao-amarelo { background: var(--amarelo); color: #3C1B18; }
+.botao-contorno { color: white; background: transparent; border-color: rgba(255,255,255,.85); }
+.botao:disabled { cursor: not-allowed; opacity: .5; }
+.titulo-secao { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 12px; }
+.titulo-secao h2 { font-size: 21px; letter-spacing: -.6px; margin: 0; }
+.contador { padding: 7px 11px; border-radius: 100px; background: rgba(255,255,255,.2); font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+/* 5. Itens do consignado */
+.vazio { border: 2px dashed rgba(255,255,255,.56); border-radius: 18px; padding: 28px 20px; text-align: center; color: #FFF1F7; }
+.vazio strong { display: block; font-size: 16px; color: #FFF; margin-bottom: 7px; }
+.vazio span { line-height: 1.6; font-size: 13px; }
+.lista { display: grid; gap: 11px; }
+.item { border-radius: 19px; background: var(--fundo-cartao); color: var(--texto); padding: 16px; box-shadow: var(--sombra); }
+.item-topo { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.item-nome { min-width: 0; flex: 1; margin: 0; font-size: 16px; font-weight: 800; overflow-wrap: anywhere; }
+.item-valor { font-size: 17px; white-space: nowrap; font-weight: 800; }
+.icones { display: flex; gap: 2px; }
+.icone-btn { display: grid; place-items: center; width: 43px; height: 43px; border: 0; border-radius: 12px; background: transparent; color: #963E66; }
+.icone-btn:active { background: #FFE7F0; }
+.icone-btn svg { width: 19px; height: 19px; }
+.divisao { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.parte { padding: 11px; border-radius: 12px; background: #FFE5EF; min-width: 0; }
+.parte.fornecedora { background: #FFF0C4; }
+.parte small { display: block; color: #73515F; font-size: 11px; font-weight: 700; margin-bottom: 5px; }
+.parte strong { font-size: 15px; display: block; }
+
+/* 6. Totais e compartilhamento */
+.resumo { background: #fff; color: var(--texto); margin-top: 24px; border-radius: 22px; padding: 20px; box-shadow: var(--sombra); }
+.resumo h2 { font-size: 20px; margin: 0 0 14px; }
+.resumo-linha { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; }
+.resumo-linha span { font-size: 13px; color: var(--cinza); }
+.resumo-linha strong { font-size: 19px; white-space: nowrap; }
+.resumo-linha.principal { border-bottom: 1px solid #F4DEE7; margin-bottom: 5px; padding-bottom: 15px; }
+.resumo-linha.principal strong { font-size: clamp(24px, 7vw, 32px); color: var(--rosa-escuro); }
+.resumo .nota { color: #7F6671; font-size: 11px; line-height: 1.5; margin: 11px 0 0; }
+.fornecedora-nome { display: block; margin: 19px 0 7px; font-size: 12px; font-weight: 700; }
+.campo {
+  width: 100%; min-height: 51px; border: 1.5px solid #E3D0D9; border-radius: 12px;
+  padding: 11px 14px; background: white; color: var(--texto); outline: none;
+}
+.botao-whatsapp {
+  width: 100%; margin-top: 13px; background: #168D53; color: white;
+  min-height: 57px; font-size: 15px;
+}
+.rodape { text-align: center; margin: 23px 0 0; font-size: 11px; line-height: 1.6; color: #FFE5EE; }
+
+/* 7. Formulário de inclusão/edição */
+dialog {
+  border: 0; border-radius: 24px; padding: 23px; background: #FFF9FC;
+  color: var(--texto); width: min(calc(100% - 30px), 440px); box-shadow: 0 25px 80px rgba(0,0,0,.35);
+}
+dialog::backdrop { background: rgba(45,3,24,.62); }
+dialog h2 { font-size: 22px; margin: 0 0 7px; }
+dialog p { font-size: 13px; color: #725865; margin: 0 0 18px; line-height: 1.5; }
+.form-linha { margin: 13px 0; }
+.form-linha label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 7px; }
+.form-erro { color: #B00043; font-size: 12px; min-height: 18px; margin-top: 7px; }
+.form-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 13px; }
+.cancelar { background: #F5E5ED; color: var(--texto); }
+.salvar { background: var(--rosa); color: white; }
+@media (max-width: 375px) {
+  .app { padding-left: 13px; padding-right: 13px; }
+  .item { padding: 13px; }
+  .item-nome { font-size: 14px; }
+  .item-valor { font-size: 15px; }
+  .icone-btn { width: 39px; }
+  .resumo { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .mic.ouvindo { animation: none; } }
+
+/* Modo mãos livres: indicação clara, mantendo o visual original */
+.maos-livres-dica { color: #FFF8DF; max-width: 360px; margin: 10px auto 7px; font-size: 12px; line-height: 1.5; font-weight: 600; }
+.tela-ativa { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px; border-radius: 12px; color: #fff; background: rgba(255,255,255,.12); font-size: 12px; font-weight: 700; cursor: pointer; }
+.tela-ativa input { accent-color: #FFD037; inline-size: 19px; block-size: 19px; cursor: pointer; }
+.status-maos-livres { border-radius: 13px; padding: 10px 13px; max-width: 430px; margin: 10px auto 0; color: #402023; background: #FFE5A3; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.status-maos-livres[hidden] { display: none; }
+.ponto-ativo { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #12934E; margin-right: 4px; box-shadow: 0 0 0 3px rgba(18,147,78,.15); }
+
+/* Compartilhamento confiável no Android (versão 5) */
+a.botao-whatsapp { display: flex; text-decoration: none; cursor: pointer; }
+a.botao-whatsapp[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+.opcoes-compartilhar { margin-top: 9px; display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 9px; }
+.opcoes-compartilhar .botao { width: 100%; min-height: 48px; font-size: 13px; }
+.botao-compartilhar { background: #FFF0C4; color: #472333; border: 1px solid #E5C976; }
+.botao-copiar { background: #FFF5FA; color: #6B2546; border: 1px solid #EFCADD; }
+.botao[hidden] { display: none !important; }
+.compartilhar-feedback { color: #5C4751; font-size: 12px; line-height: 1.5; margin: 9px 2px 0; }
+.compartilhar-feedback:empty { display: none; }
+.dialogo-compartilhar textarea { display: block; width: 100%; height: min(42vh, 320px); margin: 8px 0 12px; resize: vertical;
+  border: 1px solid #E3D0D9; border-radius: 12px; padding: 10px; font: 13px/1.5 Inter, sans-serif; color: var(--texto); }

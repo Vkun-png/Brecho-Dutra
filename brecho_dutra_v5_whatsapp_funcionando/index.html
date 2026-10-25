@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F90968">
+  <meta name="description" content="Controle simples de peças em consignação com voz e divisão 50/50.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Brechó Dutra">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <title>Brechó Dutra | Consignado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- CSS em arquivo separado para facilitar manutenção -->
+  <link rel="stylesheet" href="./css/style.css?v=5">
+</head>
+<body>
+  <main class="app">
+    <header class="topo">
+      <div class="logo" aria-label="Brechó Dutra"><span>brechó</span><strong>dutra</strong></div>
+      <div class="selo">CONSIGNADO 50/50</div>
+    </header>
+
+    <section class="intro">
+      <h1>Seu consignado,<br>sem complicação.</h1>
+      <p>Fale as peças e os preços. A divisão é calculada na hora!</p>
+    </section>
+
+    <section class="area-voz" aria-label="Cadastro por voz">
+      <button id="micButton" class="mic" type="button" aria-label="Iniciar reconhecimento de voz" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="2.5" width="6" height="12" rx="3"></rect>
+          <path d="M5.8 10.5a6.2 6.2 0 0 0 12.4 0M12 16.8V21m-4 0h8"></path>
+        </svg>
+      </button>
+      <strong class="acao-voz" id="micLabel">Toque para falar</strong>
+      <p class="exemplo">Exemplo: “blusa vermelha quinze, calça jeans trinta, vestido vinte”</p>
+      <p class="maos-livres-dica">Fale, separe as peças e faça pausas: o microfone volta a ouvir sozinho.<br>Para outra peça idêntica, diga <strong>“outra igual”</strong>.</p>
+      <label class="tela-ativa"><input id="keepScreenOn" type="checkbox" checked> Manter tela ligada durante a avaliação</label>
+      <p id="handsFreeStatus" class="status-maos-livres" hidden><span class="ponto-ativo"></span> Modo mãos livres ligado · diga <strong>“encerrar gravação”</strong> para parar</p>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      <!-- Alternativa para navegadores que não oferecem transcrição pela Web Speech API.
+           O microfone do teclado do celular funciona independentemente da API acima. -->
+      <button id="dictationToggle" class="ditado-atalho" type="button" aria-expanded="false" aria-controls="dictationPanel">
+        Voz não funcionou? Use o microfone do teclado
+      </button>
+      <div id="dictationPanel" class="ditado-painel" hidden>
+        <label for="dictationText">Ditado pelo teclado do celular</label>
+        <p>Toque no campo e no microfone do teclado. Fale: “blusa vermelha quinze, calça jeans trinta”. Também pode digitar.</p>
+        <textarea id="dictationText" spellcheck="true" autocomplete="off" placeholder="Ex.: blusa vermelha quinze, calça jeans trinta"></textarea>
+        <button type="button" id="dictationAdd" class="botao botao-amarelo">Adicionar peças ditadas</button>
+      </div>
+    </section>
+
+    <div class="acoes">
+      <button type="button" id="addButton" class="botao botao-amarelo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar peça
+      </button>
+      <button type="button" id="clearButton" class="botao botao-contorno">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18m-2 0-1 14H6L5 6m3 0V4h8v2m-6 4v7m4-7v7"/></svg>
+        Limpar lista
+      </button>
+    </div>
+
+    <section aria-labelledby="listTitle">
+      <div class="titulo-secao">
+        <h2 id="listTitle">Peças adicionadas</h2>
+        <span class="contador" id="count">0 peças</span>
+      </div>
+      <div id="empty" class="vazio"><strong>Nenhuma peça ainda</strong><span>Toque no microfone e fale os nomes com seus valores. Faça pausas sem precisar tocar novamente no microfone.</span></div>
+      <div id="items" class="lista"></div>
+    </section>
+
+    <section class="resumo" aria-labelledby="summaryTitle">
+      <h2 id="summaryTitle">Resumo da divisão</h2>
+      <div class="resumo-linha principal"><span>Total geral das peças</span><strong id="total">R$ 0,00</strong></div>
+      <div class="resumo-linha"><span>Brechó Dutra (50%)</span><strong id="storeTotal">R$ 0,00</strong></div>
+      <div class="resumo-linha"><span>Fornecedora (50%)</span><strong id="supplierTotal">R$ 0,00</strong></div>
+      <p class="nota">Se o valor tiver centavos ímpares, o centavo restante fica com a fornecedora.</p>
+      <label class="fornecedora-nome" for="supplierName">Nome da fornecedora (opcional)</label>
+      <input id="supplierName" class="campo" type="text" maxlength="80" placeholder="Ex.: Maria" autocomplete="off">
+      <!-- Link real na própria aba: funciona sem abrir janelas/popups bloqueados. -->
+      <a id="whatsappButton" class="botao botao-whatsapp" href="#" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.7a8 8 0 0 1-11.7 7.1L4 20l1.2-4.3A8 8 0 1 1 20 11.7Z"/><path d="M9 8.5c-.6-.6-.9-.2-1.2.4-.2.4-.2 1.2.4 2.4a9 9 0 0 0 4.5 3.8c1.1.4 2 .3 2.5-.2l.5-.9-2.2-1.1-.9.8c-1.5-.6-2.7-1.8-3.3-3.2l.8-.9Z"/></svg>
+        Compartilhar no WhatsApp
+      </a>
+      <div class="opcoes-compartilhar">
+        <button type="button" id="androidShareButton" class="botao botao-compartilhar" hidden>Compartilhar pelo Android</button>
+        <button type="button" id="copyShareButton" class="botao botao-copiar" disabled>Copiar mensagem</button>
+      </div>
+      <p id="shareFeedback" class="compartilhar-feedback" role="status" aria-live="polite"></p>
+    </section>
+    <footer class="rodape">Feito para o Brechó Dutra 💗<br>Os dados são salvos apenas neste navegador.</footer>
+  </main>
+
+  <dialog id="itemDialog" aria-labelledby="dialogTitle">
+    <form id="itemForm" novalidate>
+      <h2 id="dialogTitle">Adicionar peça</h2>
+      <p>Preencha o nome e o preço total da peça.</p>
+      <div class="form-linha">
+        <label for="itemName">Nome da peça</label>
+        <input class="campo" id="itemName" name="itemName" type="text" maxlength="150" autocomplete="off" required placeholder="Ex.: Blusa vermelha">
+      </div>
+      <div class="form-linha">
+        <label for="itemPrice">Valor de venda (R$)</label>
+        <input class="campo" id="itemPrice" name="itemPrice" type="text" inputmode="decimal" autocomplete="off" required placeholder="Ex.: 15,00">
+      </div>
+      <div id="formError" class="form-erro" role="alert"></div>
+      <div class="form-botoes">
+        <button id="cancelButton" type="button" class="botao cancelar">Cancelar</button>
+        <button type="submit" class="botao salvar">Salvar peça</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Alternativa caso o Android bloqueie compartilhamento e área de transferência. -->
+  <dialog id="shareDialog" class="dialogo-compartilhar" aria-labelledby="shareDialogTitle">
+    <h2 id="shareDialogTitle">Mensagem do consignado</h2>
+    <p>Selecione e copie o texto abaixo. Depois, cole em uma conversa do WhatsApp.</p>
+    <textarea id="shareText" readonly aria-label="Texto do relatório para copiar"></textarea>
+    <div class="form-botoes">
+      <button id="closeShareDialog" type="button" class="botao cancelar">Fechar</button>
+      <button id="selectShareText" type="button" class="botao salvar">Selecionar texto</button>
+    </div>
+  </dialog>
+
+  <!-- Javascript carregado ao final da página (após os elementos HTML). -->
+  <script src="./js/app.js?v=5" defer></script>
+</body>
+</html>
